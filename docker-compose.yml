@@ -30,7 +30,7 @@ services:
     container_name: depi-devops-nginx
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "8081:80"
     volumes:
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - app_public:/var/www/html/public:ro

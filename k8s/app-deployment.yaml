@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: laravel-app-deployment
+  namespace: depi-production
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: laravel-ecommerce
+  template:
+    metadata:
+      labels:
+        app: laravel-ecommerce
+    spec:
+      containers:
+      - name: php-app
+        image: depi-devops-app:latest
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            cp -r /var/www/html/. /shared-data/
+            php-fpm
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+        env:
+        - name: APP_KEY
+          value: "base64:uS6yY6Opx77bH5/S9iX8QO+mH6NnJvL2R9Bv1vC5M8A="
+        - name: DB_HOST
+          value: "mysql-service"
+        - name: DB_DATABASE 
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: db-name
+        - name: DB_USERNAME
+          value: "yusef"
+        - name: DB_PASSWORD 
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: db-password
+        volumeMounts:
+        - name: shared-data
+          mountPath: /shared-data
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 45
+          periodSeconds: 15
+        volumeMounts:
+        - name: nginx-conf
+          mountPath: /etc/nginx/conf.d
+        - name: shared-data
+          mountPath: /var/www/html
+      volumes:
+      - name: nginx-conf
+        configMap:
+          name: nginx-config
+      - name: shared-data
+        emptyDir: {}
