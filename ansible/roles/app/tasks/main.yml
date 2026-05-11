@@ -1,0 +1,26 @@
+---
+- name: Ensure application directory exists
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Clone repository
+  git:
+    repo: "{{ repo_url }}"
+    dest: "{{ app_dir }}"
+    version: "{{ repo_branch }}"
+    force: yes
+
+- name: Setup .env file from .env.docker
+  copy:
+    src: "{{ app_dir }}/.env.docker"
+    dest: "{{ app_dir }}/.env"
+    remote_src: yes
+
+- name: Pull and start Docker containers
+  shell:
+    cmd: "docker compose up -d --build"
+    chdir: "{{ app_dir }}"

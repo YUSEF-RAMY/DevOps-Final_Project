@@ -1,0 +1,30 @@
+---
+- name: Allow SSH
+  ufw:
+    rule: allow
+    port: 22
+    proto: tcp
+
+- name: Allow HTTP
+  ufw:
+    rule: allow
+    port: "{{ http_port }}"
+    proto: tcp
+
+- name: Allow HTTPS
+  ufw:
+    rule: allow
+    port: "{{ https_port }}"
+    proto: tcp
+
+- name: Allow App Port (8080)
+  ufw:
+    rule: allow
+    port: "{{ app_port }}"
+    proto: tcp
+
+- name: Set default deny policy
+  ufw:
+    state: enabled
+    policy: deny
+    direction: incoming

@@ -1,0 +1,13 @@
+---
+app_dir: /var/www/ecommerce
+repo_url: https://github.com/YUSEF-RAMY/DevOps_Final_Project.git
+repo_branch: develop
+
+# Ports
+http_port: 80
+https_port: 443
+app_port: 8080
+mysql_port: 3307
+
+# Docker
+docker_compose_version: "v2.21.0"

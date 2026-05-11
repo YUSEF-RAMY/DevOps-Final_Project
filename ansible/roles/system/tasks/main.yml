@@ -1,0 +1,19 @@
+---
+- name: Update apt cache and upgrade packages
+  apt:
+    update_cache: yes
+    upgrade: dist
+    cache_valid_time: 3600
+
+- name: Install base packages
+  apt:
+    name:
+      - curl
+      - git
+      - unzip
+      - software-properties-common
+      - ca-certificates
+      - gnupg
+      - lsb-release
+      - python3-pip
+    state: present

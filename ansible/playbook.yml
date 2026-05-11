@@ -1,0 +1,10 @@
+---
+- name: Deploy Laravel eCommerce Application
+  hosts: webservers
+  become: yes
+  roles:
+    - system
+    - docker
+    - security
+    - app
+    - monitoring
