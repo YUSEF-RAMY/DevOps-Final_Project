@@ -5,6 +5,15 @@ metadata:
   namespace: depi-production
 spec:
   replicas: 10
+  # ============================================================
+  # Task 8: Automated Rollback & Zero-Downtime Strategy
+  # ============================================================
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2         # Create 2 extra pods during update to maintain capacity
+      maxUnavailable: 0   # Ensure all pods are running before killing old ones
+  # ============================================================
   selector:
     matchLabels:
       app: laravel-ecommerce
