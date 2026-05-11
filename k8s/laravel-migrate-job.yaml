@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
       - name: migration
-        image: rawanfawzy05/devops-final-project:latest
+        image: depi-devops-app:latest
         imagePullPolicy: IfNotPresent
         command: ["php", "artisan", "migrate", "--force"]
         env:

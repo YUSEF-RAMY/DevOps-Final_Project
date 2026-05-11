@@ -24,11 +24,13 @@ spec:
     spec:
       containers:
       - name: php-app
-        image: rawanfawzy05/devops-final-project:latest
+        image: depi-devops-app:latest
         imagePullPolicy: IfNotPresent
         command: ["/bin/sh", "-c"]
         args:
-          - "cp -r /var/www/html/. /shared-data/ && php-fpm"
+          - |
+            cp -r /var/www/html/. /shared-data/
+            php-fpm
         resources:
           requests:
             cpu: "100m"
@@ -66,18 +68,6 @@ spec:
             port: 80
           initialDelaySeconds: 45
           periodSeconds: 15
-        # ============================================================
-        # Task 8: Readiness Probe for Health Monitoring
-        # This triggers an automatic rollback if the new version fails
-        # ============================================================
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 80
-          initialDelaySeconds: 10
-          periodSeconds: 5
-          failureThreshold: 3
-        # ============================================================
         volumeMounts:
         - name: nginx-conf
           mountPath: /etc/nginx/conf.d
