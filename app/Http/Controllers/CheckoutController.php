@@ -470,6 +470,12 @@ class CheckoutController extends Controller
                 'line_total' => $cartItem->line_total,
             ]);
         }
+
+        app(\App\Services\NotificationService::class)->notifyNewOrder(
+            $order->id,
+            $order->number,
+            (float) $order->grand_total
+        );
         
         // Process payment for payment gateways
         $gatewayName = trim((string) $request->input('gateway', ''));

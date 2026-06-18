@@ -340,6 +340,7 @@ class DatabaseSeeder extends Seeder
 
         // Pages
         $this->call(PageSeeder::class);
+        $this->call(PureRoseSeeder::class);
         
         // Bangladesh Districts
         $this->call(BangladeshDistrictsSeeder::class);

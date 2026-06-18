@@ -16,12 +16,12 @@ class ThemeHelper
         try {
             $theme = SiteSetting::get()->theme ?? 'theme1';
             // Validate theme exists
-            if (!in_array($theme, ['theme1', 'theme2', 'theme3'])) {
-                return 'theme1';
+            if (!in_array($theme, ['theme1', 'theme2', 'theme3', 'pure-rose'])) {
+                return 'pure-rose';
             }
             return $theme;
         } catch (\Throwable $e) {
-            return 'theme1';
+            return 'pure-rose';
         }
     }
 
@@ -62,6 +62,11 @@ class ThemeHelper
                 'name' => 'Theme 3',
                 'description' => 'Poppins Font, Modern Glass Solutions Theme',
                 'preview' => 'Bootstrap 5, Font Awesome, Poppins font family'
+            ],
+            'pure-rose' => [
+                'name' => 'PURE ROSE',
+                'description' => 'Premium luxury floral boutique — burgundy, gold, cinematic',
+                'preview' => 'Glassmorphism, occasions CRM, floral AI assistant'
             ]
         ];
     }

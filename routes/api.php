@@ -35,6 +35,9 @@ Route::post('/coupons/apply', [ApiCouponController::class, 'apply']);
 Route::post('/coupons/remove', [ApiCouponController::class, 'remove']);
 Route::post('/coupons/validate', [ApiCouponController::class, 'validateCode']);
 
+// Floral AI Assistant
+Route::post('/ai/consult', [App\Http\Controllers\Api\AIClientController::class, 'consult']);
+
 // Authenticated endpoints
 Route::middleware('auth:sanctum')->group(function () {
     // Auth
@@ -54,6 +57,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/orders', [ApiOrderController::class, 'index']);
     Route::get('/orders/{id}', [ApiOrderController::class, 'show']);
     Route::post('/checkout', [ApiOrderController::class, 'place']);
+
+    Route::post('/ai/consult', [App\Http\Controllers\Api\AIClientController::class, 'consult']);
 });
 
 

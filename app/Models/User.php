@@ -75,6 +75,26 @@ class User extends Authenticatable
         return $this->hasMany(ProductReview::class);
     }
 
+    public function occasions(): HasMany
+    {
+        return $this->hasMany(Occasion::class);
+    }
+
+    public function flowerSubscriptions(): HasMany
+    {
+        return $this->hasMany(FlowerSubscription::class);
+    }
+
+    public function appNotifications(): HasMany
+    {
+        return $this->hasMany(UserNotification::class);
+    }
+
+    public function totalSpent(): float
+    {
+        return (float) $this->orders()->where('payment_status', 'paid')->sum('total');
+    }
+
     public function getDefaultBillingAddress()
     {
         return $this->addresses()->where('type', 'billing')->where('is_default', true)->first();
