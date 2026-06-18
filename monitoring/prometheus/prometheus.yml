@@ -1,0 +1,78 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: depi-ecommerce
+    environment: production
+
+rule_files:
+  - /etc/prometheus/rules/*.yml
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+scrape_configs:
+  # ─── Prometheus self-monitoring ──────────────────────────────────────────────
+  - job_name: prometheus
+    static_configs:
+      - targets: ["prometheus:9090"]
+        labels:
+          service: prometheus
+
+  # ─── Host metrics (CPU, memory, disk) ────────────────────────────────────────
+  - job_name: node-exporter
+    static_configs:
+      - targets: ["node-exporter:9100"]
+        labels:
+          service: node-exporter
+          instance: docker-host
+
+  # ─── Docker container metrics ────────────────────────────────────────────────
+  - job_name: cadvisor
+    static_configs:
+      - targets: ["cadvisor:8080"]
+        labels:
+          service: cadvisor
+
+  # ─── MySQL database metrics ──────────────────────────────────────────────────
+  - job_name: mysqld-exporter
+    static_configs:
+      - targets: ["mysqld-exporter:9104"]
+        labels:
+          service: mysql
+          database: depi_devops
+
+  # ─── Redis cache metrics ─────────────────────────────────────────────────────
+  - job_name: redis-exporter
+    static_configs:
+      - targets: ["redis-exporter:9121"]
+        labels:
+          service: redis
+
+  # ─── HTTP uptime — Laravel storefront via Nginx ──────────────────────────────
+  - job_name: blackbox-http
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - http://nginx:80/
+          - http://nginx:80/admin/login
+        labels:
+          service: laravel-nginx
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+  # ─── Blackbox exporter self-metrics ──────────────────────────────────────────
+  - job_name: blackbox-exporter
+    static_configs:
+      - targets: ["blackbox-exporter:9115"]
+        labels:
+          service: blackbox-exporter

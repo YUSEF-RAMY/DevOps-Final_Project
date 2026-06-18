@@ -1,0 +1,13 @@
+apiVersion: 1
+
+providers:
+  - name: Depi E-Commerce Dashboards
+    orgId: 1
+    folder: Depi DevOps
+    type: file
+    disableDeletion: false
+    editable: true
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards
