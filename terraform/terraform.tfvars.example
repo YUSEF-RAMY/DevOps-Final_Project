@@ -1,0 +1,24 @@
+# Terraform variable overrides — copy to terraform.tfvars and fill in secrets.
+# NEVER commit terraform.tfvars to Git.
+
+aws_region   = "us-east-1"
+project_name = "depi-ecommerce"
+environment  = "production"
+
+# Required: set a strong password before running terraform apply
+db_password = "CHANGE_ME_STRONG_PASSWORD"
+
+# Optional: EC2 SSH key pair name created in AWS Console
+# ec2_key_name = "depi-devops-key"
+
+# Restrict SSH to your office/home IP in production
+# allowed_ssh_cidr = "203.0.113.10/32"
+
+ec2_instance_type  = "t3.medium"
+ec2_instance_count = 2
+
+db_instance_class    = "db.t3.micro"
+db_allocated_storage = 20
+
+# Set true only in dev/sandbox to allow bucket deletion
+s3_force_destroy = false
