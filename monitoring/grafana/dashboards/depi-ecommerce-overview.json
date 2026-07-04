@@ -9,8 +9,9 @@
     {
       "type": "stat",
       "title": "Services Up",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
-      "targets": [{ "expr": "count(up == 1)", "legendFormat": "up" }],
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "count(up == 1)", "legendFormat": "up" }],
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
@@ -26,8 +27,9 @@
     {
       "type": "stat",
       "title": "Storefront HTTP OK",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
-      "targets": [{ "expr": "probe_success{job=\"blackbox-http\"}", "legendFormat": "{{instance}}" }],
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "probe_success{job=\"blackbox-http\"}", "legendFormat": "{{instance}}" }],
       "fieldConfig": {
         "defaults": {
           "mappings": [
@@ -45,8 +47,9 @@
     {
       "type": "stat",
       "title": "MySQL Status",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
-      "targets": [{ "expr": "mysql_up", "legendFormat": "mysql" }],
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "mysql_up", "legendFormat": "mysql" }],
       "fieldConfig": {
         "defaults": {
           "mappings": [
@@ -64,8 +67,9 @@
     {
       "type": "stat",
       "title": "Redis Status",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
-      "targets": [{ "expr": "redis_up", "legendFormat": "redis" }],
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "redis_up", "legendFormat": "redis" }],
       "fieldConfig": {
         "defaults": {
           "mappings": [
@@ -83,9 +87,11 @@
     {
       "type": "timeseries",
       "title": "CPU Usage (%)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
       "targets": [
         {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "expr": "100 - (avg by(instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
           "legendFormat": "{{instance}}"
         }
@@ -95,9 +101,11 @@
     {
       "type": "timeseries",
       "title": "Memory Usage (%)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
       "targets": [
         {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
           "legendFormat": "{{instance}}"
         }
@@ -107,9 +115,11 @@
     {
       "type": "timeseries",
       "title": "HTTP Response Time (storefront)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
       "targets": [
         {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "expr": "probe_duration_seconds{job=\"blackbox-http\"}",
           "legendFormat": "{{instance}}"
         }
@@ -119,9 +129,11 @@
     {
       "type": "timeseries",
       "title": "MySQL Connections",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
       "targets": [
         {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "expr": "mysql_global_status_threads_connected",
           "legendFormat": "connected"
         }
@@ -130,9 +142,11 @@
     {
       "type": "timeseries",
       "title": "All Scrape Targets Health",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 8, "w": 24, "x": 0, "y": 20 },
       "targets": [
         {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "expr": "up",
           "legendFormat": "{{job}} — {{instance}}"
         }

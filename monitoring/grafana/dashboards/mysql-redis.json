@@ -9,8 +9,9 @@
     {
       "type": "stat",
       "title": "MySQL Up",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
-      "targets": [{ "expr": "mysql_up" }],
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "mysql_up" }],
       "fieldConfig": {
         "defaults": {
           "mappings": [
@@ -28,8 +29,9 @@
     {
       "type": "stat",
       "title": "Redis Up",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
-      "targets": [{ "expr": "redis_up" }],
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "redis_up" }],
       "fieldConfig": {
         "defaults": {
           "mappings": [
@@ -47,9 +49,11 @@
     {
       "type": "stat",
       "title": "MySQL Queries/sec",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
       "targets": [
         {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "expr": "rate(mysql_global_status_questions[5m])",
           "legendFormat": "qps"
         }
@@ -58,9 +62,11 @@
     {
       "type": "stat",
       "title": "Redis Connected Clients",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
       "targets": [
         {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "expr": "redis_connected_clients",
           "legendFormat": "clients"
         }
@@ -69,9 +75,11 @@
     {
       "type": "timeseries",
       "title": "MySQL Threads Connected",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
       "targets": [
         {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "expr": "mysql_global_status_threads_connected",
           "legendFormat": "threads"
         }
@@ -80,9 +88,11 @@
     {
       "type": "timeseries",
       "title": "MySQL Slow Queries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
       "targets": [
         {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "expr": "rate(mysql_global_status_slow_queries[5m])",
           "legendFormat": "slow/s"
         }
@@ -91,9 +101,11 @@
     {
       "type": "timeseries",
       "title": "Redis Memory Used",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
       "targets": [
         {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "expr": "redis_memory_used_bytes",
           "legendFormat": "used"
         }
@@ -103,9 +115,11 @@
     {
       "type": "timeseries",
       "title": "Redis Commands/sec",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
       "targets": [
         {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "expr": "rate(redis_commands_processed_total[5m])",
           "legendFormat": "cmds/s"
         }
