@@ -71,6 +71,10 @@ services:
       - /var/run:/var/run:ro
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    devices:
+      - /dev/kmsg
     networks:
       - monitoring
       - app
@@ -82,8 +86,10 @@ services:
     restart: unless-stopped
     ports:
       - "9104:9104"
-    environment:
-      DATA_SOURCE_NAME: "yusef:password@(db:3306)/depi_devops"
+    volumes:
+      - ./prometheus/.my.cnf:/.my.cnf:ro
+    command:
+      - "--config.my-cnf=/.my.cnf"
     networks:
       - monitoring
       - app
@@ -123,4 +129,4 @@ networks:
     driver: bridge
   app:
     external: true
-    name: ${APP_DOCKER_NETWORK:-devops_final_project_depi-network}
+    name: ${APP_DOCKER_NETWORK:-ecommercelaravel_depi-network}
