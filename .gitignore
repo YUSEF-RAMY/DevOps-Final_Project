@@ -22,6 +22,11 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+/terraform/.terraform/
+/terraform/*.tfstate
+/terraform/*.tfstate.*
+/terraform/*.tfvars
+!/terraform/terraform.tfvars.example
 /storage/framework/cache/data/*
 /storage/framework/sessions/*
 /storage/framework/testing/*
