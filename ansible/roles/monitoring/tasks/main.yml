@@ -1,17 +1,32 @@
 ---
-- name: Deploy Node Exporter container
-  docker_container:
-    name: node-exporter
-    image: prom/node-exporter:latest
-    state: started
-    restart_policy: unless-stopped
-    ports:
-      - "9100:9100"
-    volumes:
-      - "/proc:/host/proc:ro"
-      - "/sys:/host/sys:ro"
-      - "/:/rootfs:ro"
-    command:
-      - '--path.procfs=/host/proc'
-      - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($|/)'
+- name: Ensure monitoring directory exists on server
+  file:
+    path: "{{ app_dir }}/monitoring"
+    state: directory
+    mode: "0755"
+
+- name: Copy monitoring stack to server
+  copy:
+    src: "{{ playbook_dir }}/../monitoring/"
+    dest: "{{ app_dir }}/monitoring/"
+    mode: preserve
+
+- name: Detect application Docker network name
+  shell: docker network ls --format '{{"{{"}}.Name{{"}}"}}' | grep depi-network | head -1
+  register: depi_network
+  changed_when: false
+  failed_when: false
+
+- name: Write monitoring .env with detected network
+  copy:
+    dest: "{{ app_dir }}/monitoring/.env"
+    content: |
+      APP_DOCKER_NETWORK={{ depi_network.stdout | default('devops_final_project_depi-network', true) }}
+    mode: "0600"
+
+- name: Start Prometheus + Grafana monitoring stack
+  shell: docker compose --env-file .env up -d
+  args:
+    chdir: "{{ app_dir }}/monitoring"
+  register: monitoring_start
+  changed_when: "'Started' in monitoring_start.stdout or 'Created' in monitoring_start.stdout or monitoring_start.rc == 0"
