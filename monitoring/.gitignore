@@ -1,0 +1,3 @@
+# Monitoring stack local overrides
+.env
+prometheus/.my.cnf
