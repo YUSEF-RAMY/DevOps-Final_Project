@@ -3,14 +3,16 @@
 @section('title', 'Your Cart')
 
 @section('content')
+
+<div class="w-100" style="background-color: #FAF6F0; min-h-screen: 100vh; color: #4a1525;">
 <div class="container py-5">
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="display-5 fw-bold mb-0">
+                <h1 class="display-5 fw-bold mb-0" style="color: #4a1525;">
                     <i class="bi bi-cart me-2"></i>Your Cart
                 </h1>
-                <a href="{{ route('products.index') }}" class="btn btn-outline-primary btn-custom">
+                <a href="{{ route('products.index') }}" class="btn btn-custom" style="border-color: #4a1525; color: #4a1525; background: transparent; font-weight: 500;">
                     <i class="bi bi-arrow-left me-2"></i>Continue Shopping
                 </a>
             </div>
@@ -29,10 +31,9 @@
     @endif
 
     @if($cart->items->isEmpty())
-        <!-- Empty Cart -->
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">
-                <div class="card border-0 shadow-sm text-center">
+                <div class="card border-0 shadow-sm text-center bg-white">
                     <div class="card-body py-5">
                         <i class="bi bi-cart-x display-1 text-muted mb-4"></i>
                         <h3 class="text-muted mb-3">Your cart is empty</h3>
@@ -40,7 +41,7 @@
                             Looks like you haven't added any items to your cart yet. 
                             Start shopping to fill it up!
                         </p>
-                        <a href="{{ route('products.index') }}" class="btn btn-primary btn-lg btn-custom">
+                        <a href="{{ route('products.index') }}" class="btn btn-lg btn-custom" style="background-color: #4a1525; color: #ffffff; border: none;">
                             <i class="bi bi-grid me-2"></i>Start Shopping
                         </a>
                     </div>
@@ -49,15 +50,15 @@
         </div>
     @else
         <div class="row">
-            <!-- Cart Items -->
             <div class="col-lg-8 mb-4">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">
+                <div class="card border-0 shadow-sm bg-white">
+                   
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3" style="border-bottom: 1px solid rgba(74, 21, 37, 0.1);">
+                        <h5 class="mb-0" style="color: #4a1525; font-weight: 600;">
                             <i class="bi bi-list-ul me-2"></i>Cart Items ({{ $cart->items->count() }})
                         </h5>
                         @if($cart->items->count() > 0)
-                        <form id="cartClearForm" action="{{ route('cart.clear') }}" method="post" class="d-inline float-end">
+                        <form id="cartClearForm" action="{{ route('cart.clear') }}" method="post" class="d-inline m-0">
                             @csrf
                             <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Clear All</button>
                         </form>
@@ -66,13 +67,13 @@
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-hover mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th class="border-0">Product</th>
-                                        <th class="border-0">Price</th>
-                                        <th class="border-0">Quantity</th>
-                                        <th class="border-0">Total</th>
-                                        <th class="border-0">Actions</th>
+                                <thead>
+                                    <tr style="background-color: #fcfbfa;">
+                                        <th class="border-0" style="color: #4a1525; font-weight: 600;">Product</th>
+                                        <th class="border-0" style="color: #4a1525; font-weight: 600;">Price</th>
+                                        <th class="border-0" style="color: #4a1525; font-weight: 600;">Quantity</th>
+                                        <th class="border-0" style="color: #4a1525; font-weight: 600;">Total</th>
+                                        <th class="border-0" style="color: #4a1525; font-weight: 600;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -97,8 +98,8 @@
                                                     <div>
                                                         <h6 class="mb-1">
                                                             <a href="{{ route('products.show', $item->product->slug) }}" 
-                                                               class="text-decoration-none text-dark">
-                                                                {{ $item->product->name }}
+                                                               class="text-decoration-none fw-semibold" style="color: #4a1525;">
+                                                                 {{ $item->product->name }}
                                                             </a>
                                                         </h6>
                                                         <small class="text-muted">{{ $item->product->sku }}</small>
@@ -106,7 +107,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                    <span class="fw-semibold">@currency($item->unit_price)</span>
+                                                <span class="fw-semibold" style="color: #4a1525;">@currency($item->unit_price)</span>
                                             </td>
                                             <td>
                                                 <form action="{{ route('cart.items.update', $item->id) }}" method="post" class="d-flex align-items-center cart-update-form">
@@ -115,15 +116,15 @@
                                                     <div class="input-group" style="width: 120px;">
                                                         <input type="number" name="quantity" min="1" max="{{ (int) ($item->product->stock ?? 0) }}" 
                                                                value="{{ $item->quantity }}" 
-                                                               class="form-control form-control-sm text-center">
-                                                        <button type="submit" class="btn btn-outline-primary btn-sm">
-                                                            <i class="bi bi-check"></i>
+                                                               class="form-control form-control-sm text-center" style="background-color: #FAF6F0; border-color: rgba(74, 21, 37, 0.2);">
+                                                        <button type="submit" class="btn btn-sm" style="background-color: #c5a059; color: #4a1525; border: 1px solid #c5a059;">
+                                                            <i class="bi bi-check text-white"></i>
                                                         </button>
                                                     </div>
                                                 </form>
                                             </td>
                                             <td>
-                                                    <span class="fw-bold item-line-total text-primary">@currency($item->line_total)</span>
+                                                <span class="fw-bold item-line-total" style="color: #4a1525;">@currency($item->line_total)</span>
                                             </td>
                                             <td>
                                                 <form action="{{ route('cart.items.remove', $item->id) }}" method="post" class="d-inline cart-remove-form">
@@ -143,32 +144,31 @@
                 </div>
             </div>
 
-            <!-- Order Summary -->
             <div class="col-lg-4">
-                <div class="card border-0 shadow-sm sticky-top" style="top: 100px;">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">
+                
+                <div class="card border-0 shadow-sm sticky-top" style="top: 100px; background-color: #4a1525; color: #FAF6F0;">
+                    <div class="card-header text-white" style="background-color: rgba(0,0,0,0.15) !important; border-bottom: 1px solid rgba(250, 246, 240, 0.1);">
+                        <h5 class="mb-0 py-1">
                             <i class="bi bi-receipt me-2"></i>Order Summary
                         </h5>
                     </div>
                     <div class="card-body">
-                        <!-- Coupon Section -->
                         <div class="mb-4">
-                            <h6 class="fw-semibold mb-2">
+                            <h6 class="fw-semibold mb-2" style="color: #FAF6F0;">
                                 <i class="bi bi-ticket me-1"></i>Coupon Code
                             </h6>
                             @if($cart->coupon)
-                                <div class="alert alert-success py-2 mb-2">
+                                <div class="alert alert-success py-2 mb-2 bg-white/10 border-0 text-white">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <strong>{{ $cart->coupon->code }}</strong>
                                             <br>
-                                            <small>{{ $cart->coupon->name }}</small>
+                                            <small style="color: rgba(250, 246, 240, 0.8);">{{ $cart->coupon->name }}</small>
                                         </div>
                                         <form action="{{ route('coupons.remove') }}" method="post" class="d-inline">
                                             @csrf
-                                            <button type="submit" class="btn btn-outline-danger btn-sm">
-                                                <i class="bi bi-x"></i>
+                                            <button type="submit" class="btn btn-outline-light btn-sm border-0">
+                                                <i class="bi bi-x-lg"></i>
                                             </button>
                                         </form>
                                     </div>
@@ -178,11 +178,12 @@
                                     @csrf
                                     <input type="text" 
                                            id="couponCode" 
-                                           class="form-control form-control-sm" 
+                                           class="form-control form-control-sm text-white" 
+                                           style="background-color: rgba(250, 246, 240, 0.1); border-color: rgba(250, 246, 240, 0.2);"
                                            placeholder="Enter coupon code"
                                            maxlength="50">
-                                    <button type="submit" class="btn btn-outline-primary btn-sm">
-                                        <i class="bi bi-check"></i>
+                                    <button type="submit" class="btn btn-sm" style="background-color: #c5a059; color: #4a1525; border: none;">
+                                        <i class="bi bi-check lg text-white"></i>
                                     </button>
                                 </form>
                                 <div id="couponMessage" class="mt-2"></div>
@@ -190,36 +191,36 @@
                         </div>
 
                         <div class="d-flex justify-content-between mb-2">
-                            <span>Subtotal</span>
-                                <span id="cartSubtotal">@currency($cart->subtotal)</span>
+                            <span style="color: rgba(250, 246, 240, 0.8);">Subtotal</span>
+                            <span id="cartSubtotal" class="fw-semibold">@currency($cart->subtotal)</span>
                         </div>
                         @if($cart->coupon_discount > 0)
                             <div class="d-flex justify-content-between mb-2" id="cartDiscountRow">
-                                <span class="text-success">
+                                <span style="color: #c5a059;">
                                     <i class="bi bi-ticket me-1"></i>Discount ({{ $cart->coupon->code }})
                                 </span>
-                                    <span class="text-success" id="cartDiscount">-@currency($cart->coupon_discount)</span>
+                                <span class="fw-semibold" id="cartDiscount" style="color: #c5a059;">-@currency($cart->coupon_discount)</span>
                             </div>
                         @endif
                         <div class="d-flex justify-content-between mb-2">
-                            <span>Tax</span>
-                                <span id="cartTax">@currency($cart->tax_total)</span>
+                            <span style="color: rgba(250, 246, 240, 0.8);">Tax</span>
+                            <span id="cartTax" class="fw-semibold">@currency($cart->tax_total)</span>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
-                            <span>Shipping</span>
-                            <span class="text-muted small">Calculated at checkout</span>
+                            <span style="color: rgba(250, 246, 240, 0.8);">Shipping</span>
+                            <span class="small" style="color: #c5a059;">Calculated at checkout</span>
                         </div>
-                        <hr>
+                        <hr style="border-color: rgba(250, 246, 240, 0.15);">
                         <div class="d-flex justify-content-between mb-4">
-                            <span class="fw-bold fs-5">Total</span>
-                                <span class="fw-bold fs-5 text-primary" id="cartGrand">@currency($cart->grand_total)</span>
+                            <span class="fw-bold fs-5" style="color: #FAF6F0;">Total</span>
+                            <span class="fw-bold fs-5" style="color: #c5a059;" id="cartGrand">@currency($cart->grand_total)</span>
                         </div>
                         
                         <div class="d-grid gap-2">
-                            <a href="{{ route('checkout.show') }}" class="btn btn-success btn-lg btn-custom">
+                            <a href="{{ route('checkout.show') }}" class="btn btn-lg btn-custom" style="background-color: #c5a059 !important; color: #4a1525 !important; border: none; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
                                 <i class="bi bi-credit-card me-2"></i>Proceed to Checkout
                             </a>
-                            <a href="{{ route('products.index') }}" class="btn btn-outline-primary btn-custom">
+                            <a href="{{ route('products.index') }}" class="btn btn-custom" style="border-color: rgba(250, 246, 240, 0.3); color: #FAF6F0; background: transparent;">
                                 <i class="bi bi-arrow-left me-2"></i>Continue Shopping
                             </a>
                         </div>
@@ -227,10 +228,11 @@
                 </div>
             </div>
         </div>
+        
         @if(isset($unavailableItems) && $unavailableItems->count())
         <div class="row mt-3">
             <div class="col-12">
-                <div class="card border-0 shadow-sm">
+                <div class="card border-0 shadow-sm bg-white">
                     <div class="card-header bg-light">
                         <h6 class="mb-0 text-warning"><i class="bi bi-exclamation-triangle me-2"></i>Unavailable Items (won't be checked out)</h6>
                     </div>
@@ -290,6 +292,7 @@
         </div>
         @endif
     @endif
+</div>
 </div>
 @endsection
 
@@ -363,6 +366,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }).catch(()=>{});
         });
     });
+    
     const couponForm = document.getElementById('couponForm');
     const couponCode = document.getElementById('couponCode');
     const couponMessage = document.getElementById('couponMessage');
@@ -383,7 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i>';
             submitBtn.disabled = true;
 
-            // Get CSRF token - try multiple sources
+            // Get CSRF token
             let csrfToken = null;
             const metaToken = document.querySelector('meta[name="csrf-token"]');
             if (metaToken) {
@@ -414,18 +418,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 credentials: 'same-origin'
             })
             .then(response => {
-                // Check if response is JSON
                 const contentType = response.headers.get('content-type');
                 if (contentType && contentType.includes('application/json')) {
                     return response.json().then(data => {
-                        return {
-                            ok: response.ok,
-                            status: response.status,
-                            data: data
-                        };
+                        return { ok: response.ok, status: response.status, data: data };
                     });
                 } else {
-                    // Handle non-JSON responses (like 419 page expired)
                     return {
                         ok: false,
                         status: response.status,
@@ -439,22 +437,15 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(result => {
                 if (result.status === 419) {
-                    // Session expired - reload page
                     showMessage('Your session has expired. Refreshing page...', 'warning');
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 2000);
+                    setTimeout(() => { window.location.reload(); }, 2000);
                     return;
                 }
                 
                 if (result.ok && result.data.success) {
                     showMessage(result.data.message || 'Coupon applied successfully!', 'success');
-                    // Reload page to show updated cart
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1500);
+                    setTimeout(() => { window.location.reload(); }, 1500);
                 } else {
-                    // Handle validation errors and other errors
                     const errorMessage = result.data.message || result.data.error || 'An error occurred. Please try again.';
                     showMessage(errorMessage, 'danger');
                 }
@@ -472,29 +463,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showMessage(message, type) {
         couponMessage.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">
-            <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'exclamation-triangle'} me-2"></i>
+            <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
             ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>`;
     }
     
-    // Refresh CSRF token function
-    function refreshCsrfToken() {
-        const metaToken = document.querySelector('meta[name="csrf-token"]');
-        if (metaToken) {
-            // Try to get fresh token from a simple GET request
-            fetch('{{ route("home") }}', {
-                method: 'GET',
-                credentials: 'same-origin'
-            }).then(() => {
-                // Token should be refreshed in the page
-                const newToken = document.querySelector('meta[name="csrf-token"]');
-                if (newToken) {
-                    return newToken.getAttribute('content');
-                }
-            });
-        }
-    }
     // Clear all with SweetAlert2
     const clearForm = document.getElementById('cartClearForm');
     if (clearForm) {
@@ -533,5 +507,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endpush
-
-

@@ -26,6 +26,11 @@ use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\OTP\SmsOtpController;
 use App\Http\Controllers\OTP\EmailOtpController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\OccasionController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PremiumServiceController;
+use App\Http\Controllers\StripeWebhookController;
 
 // Installer routes (must be before installation check middleware)
 // Only register if InstallerController exists (will be removed after installation)
@@ -71,6 +76,20 @@ Route::get('/storage/{path}', function ($path) {
 Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Premium PURE ROSE services
+Route::get('/services/qr-video-messages', [PremiumServiceController::class, 'qrVideo'])->name('services.qr-video');
+Route::get('/services/ar-bouquet-preview', [PremiumServiceController::class, 'arPreview'])->name('services.ar-preview');
+Route::get('/services/floral-assistant', [PremiumServiceController::class, 'floralAssistant'])->name('services.floral-assistant');
+Route::get('/services/corporate-events', [PremiumServiceController::class, 'corporateEvents'])->name('services.corporate-events');
+
+// Notifications API (navbar bell)
+Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
+Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+
+// Stripe subscription webhooks (no CSRF)
+Route::post('/webhooks/stripe', [StripeWebhookController::class, 'handle'])->name('webhooks.stripe');
 
 // Currency switch (locked to admin only)
 Route::middleware('auth:admin')->post('/currency/switch', [CurrencyController::class, 'switch'])->name('currency.switch');
@@ -127,6 +146,13 @@ Route::prefix('user')->middleware('auth')->group(function () {
     Route::post('addresses/{address}/set-default', [AddressController::class, 'setDefault'])->name('addresses.set-default');
 
     // (moved) wishlist index is now public
+
+    Route::resource('occasions', OccasionController::class)->except(['show']);
+    Route::get('subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+    Route::post('subscriptions', [SubscriptionController::class, 'store'])->name('subscriptions.store');
+    Route::post('subscriptions/{subscription}/pause', [SubscriptionController::class, 'pause'])->name('subscriptions.pause');
+    Route::post('subscriptions/{subscription}/resume', [SubscriptionController::class, 'resume'])->name('subscriptions.resume');
+    Route::post('subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
 });
 
 // Public wishlist index (guest or user)

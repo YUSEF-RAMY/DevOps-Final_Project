@@ -12,6 +12,8 @@ use App\Models\Currency;
 use App\Models\EmailSetting;
 use App\Models\SiteSetting;
 use App\Models\StorageSetting;
+use App\Models\UserNotification;
+use App\Services\OccasionReminderService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -50,6 +52,16 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('activeCurrencies', Currency::where('is_active', true)->get());
                 $view->with('siteSettings', SiteSetting::get());
                 $view->with('currentTheme', ThemeHelper::current());
+
+                if (auth()->check()) {
+                    $view->with('userNotifications', UserNotification::where('user_id', auth()->id())->latest()->limit(8)->get());
+                    $view->with('unreadNotificationCount', UserNotification::where('user_id', auth()->id())->unread()->count());
+                    $view->with('upcomingOccasions', app(OccasionReminderService::class)->upcomingForUser(auth()->user(), 5));
+                } else {
+                    $view->with('userNotifications', collect());
+                    $view->with('unreadNotificationCount', 0);
+                    $view->with('upcomingOccasions', collect());
+                }
             } catch (\Throwable $e) {
                 $name = $view->name() ?? '';
                 if (str_starts_with($name, 'errors.') || str_starts_with($name, 'frontend.errors.') || str_starts_with($name, 'errors::') || str_contains($name, 'exception') || str_contains($name, 'laravel-exceptions-renderer')) {

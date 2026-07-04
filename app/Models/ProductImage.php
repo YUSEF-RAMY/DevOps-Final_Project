@@ -27,6 +27,15 @@ class ProductImage extends Model
         return $this->path;
     }
 
+    public function getUrlAttribute(): string
+    {
+        if ($this->path && str_starts_with($this->path, 'http')) {
+            return $this->path;
+        }
+
+        return asset('storage/' . $this->path);
+    }
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
