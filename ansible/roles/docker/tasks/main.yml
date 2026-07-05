@@ -1,23 +1,9 @@
 ---
-- name: Add Docker GPG key
-  apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    state: present
-
-- name: Add Docker repository
-  apt_repository:
-    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
-    state: present
-
 - name: Install Docker Engine
-  apt:
+  yum:
     name:
-      - docker-ce
-      - docker-ce-cli
-      - containerd.io
-      - docker-compose-plugin
+      - docker
     state: present
-    update_cache: yes
 
 - name: Ensure Docker is started and enabled
   service:
@@ -30,3 +16,22 @@
     name: "{{ ansible_user }}"
     groups: docker
     append: yes
+
+- name: Install Docker Compose plugin
+  get_url:
+    url: https://github.com/docker/compose/releases/download/v2.24.5/docker-compose-linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: '0755'
+
+- name: Ensure Docker cli-plugins directory exists
+  file:
+    path: /usr/libexec/docker/cli-plugins
+    state: directory
+    mode: '0755'
+
+- name: Create docker-compose symlink for docker compose command
+  file:
+    src: /usr/local/bin/docker-compose
+    dest: /usr/libexec/docker/cli-plugins/docker-compose
+    state: link
+  ignore_errors: true

@@ -1,0 +1,113 @@
+---
+- name: Deploy Smart Inventory System to AWS
+  hosts: webservers
+  become: yes
+  vars_files:
+    # In production, this file should be encrypted using ansible-vault
+    - secrets.yml
+  
+  vars:
+    project_dest: "/home/{{ ansible_user }}/app/infra/docker"
+    image_tag: "latest"
+    docker_registry: "your-registry.com"
+
+  tasks:
+    - name: Ensure required packages are installed
+      yum:
+        name:
+          - curl
+          - wget
+        state: present
+
+    - name: Install Docker
+      yum:
+        name:
+          - docker
+        state: present
+
+    - name: Ensure Docker service is running and enabled
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Ensure user is added to docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+
+    - name: Install Docker Compose plugin
+      get_url:
+        url: https://github.com/docker/compose/releases/download/v2.24.5/docker-compose-linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+    - name: Ensure Docker cli-plugins directory exists
+      file:
+        path: /usr/libexec/docker/cli-plugins
+        state: directory
+        mode: '0755'
+
+    - name: Create docker-compose symlink for docker compose command
+      file:
+        src: /usr/local/bin/docker-compose
+        dest: /usr/libexec/docker/cli-plugins/docker-compose
+        state: link
+      ignore_errors: true
+
+    - name: Create deployment directory
+      file:
+        path: "{{ project_dest }}"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+
+    - name: Copy Production Docker Compose file
+      copy:
+        src: ../docker/docker-compose.prod.yml
+        dest: "{{ project_dest }}/docker-compose.yml"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0644'
+
+    - name: Create .env file for secrets
+      copy:
+        dest: "{{ project_dest }}/.env"
+        content: |
+          DB_USER={{ db_user }}
+          DB_PASSWORD={{ db_password }}
+          DB_NAME={{ db_name }}
+          JWT_SECRET={{ jwt_secret }}
+          JWT_REFRESH_SECRET={{ jwt_refresh_secret }}
+          IMAGE_TAG={{ image_tag }}
+          DOCKER_REGISTRY={{ docker_registry }}
+          VITE_API_URL={{ vite_api_url }}
+          VITE_SOCKET_URL={{ vite_socket_url }}
+          CORS_ORIGIN={{ cors_origin }}
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0600'
+
+    - name: Pull Docker Images
+      shell: |
+        docker compose pull
+      args:
+        chdir: "{{ project_dest }}"
+
+    - name: Run Docker Compose
+      shell: |
+        docker compose up -d
+      args:
+        chdir: "{{ project_dest }}"
+
+    - name: Verify Docker Compose containers
+      command: docker compose ps
+      args:
+        chdir: "{{ project_dest }}"
+      register: docker_ps
+
+    - name: Show Docker Containers Status
+      debug:
+        var: docker_ps.stdout_lines
