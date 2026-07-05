@@ -40,8 +40,8 @@ resource "aws_security_group" "ec2" {
 
   ingress {
     description     = "HTTP from ALB (maps to docker-compose nginx port)"
-    from_port       = 8081
-    to_port         = 8081
+    from_port       = 8080
+    to_port         = 8080
     protocol        = "tcp"
     security_groups = [aws_security_group.alb.id]
   }

@@ -12,10 +12,14 @@ resource "aws_lb" "main" {
 }
 
 resource "aws_lb_target_group" "app" {
-  name     = "${local.name_prefix}-tg"
-  port     = 8081
+  name     = "${local.name_prefix}-tg-new"
+  port     = 8080
   protocol = "HTTP"
   vpc_id   = aws_vpc.main.id
+
+  lifecycle {
+    create_before_destroy = true
+  }
 
   health_check {
     enabled             = true
@@ -49,5 +53,5 @@ resource "aws_lb_target_group_attachment" "app" {
 
   target_group_arn = aws_lb_target_group.app.arn
   target_id        = aws_instance.app[count.index].id
-  port             = 8081
+  port             = 8080
 }
