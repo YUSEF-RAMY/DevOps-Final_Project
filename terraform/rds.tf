@@ -30,7 +30,7 @@ resource "aws_db_instance" "main" {
   publicly_accessible    = false
   skip_final_snapshot    = true
   deletion_protection    = false
-  backup_retention_period = 7
+  backup_retention_period = 0
 
   parameter_group_name = "default.mysql8.0"
 

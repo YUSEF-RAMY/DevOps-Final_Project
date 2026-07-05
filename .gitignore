@@ -32,3 +32,5 @@ Thumbs.db
 /storage/framework/testing/*
 /storage/framework/views/*.php
 /storage/logs/*.log
+
+/ansible/secrets.yml
