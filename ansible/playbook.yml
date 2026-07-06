@@ -5,6 +5,8 @@
   roles:
     - system
     - docker
+    - kubernetes
+    - jenkins
     - security
     - app
     - monitoring
