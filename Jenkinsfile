@@ -2,68 +2,96 @@ pipeline {
     agent any
 
     environment {
+        // ─── Docker Hub Configuration ───────────────────────────────────────────
         DOCKER_HUB_USER = 'rawanfawzy05'
-        APP_NAME        = 'devops-final-project'
-        IMAGE_TAG       = "${env.BUILD_ID}"
+        IMAGE_NAME      = 'devops-final-project'
+        IMAGE_TAG       = "${env.BUILD_NUMBER}"
+
+        // ─── Production Server (ec2-app-2) ──────────────────────────────────────
+        TARGET_SERVER   = '34.201.114.162'
+        TARGET_USER     = 'ec2-user'
     }
 
     stages {
-        stage('Cleanup & Preparation') {
+        // ════════════════════════════════════════════════════════════════════════
+        // Stage 1: Checkout Code — Clone from GitHub onto the Jenkins Controller
+        // ════════════════════════════════════════════════════════════════════════
+        stage('Checkout Code') {
             steps {
-                echo 'Cleaning workspace and preparing for build...'
-                deleteDir() 
-                checkout scm
+                echo '📥 Cloning repository from GitHub...'
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/develop']],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/YUSEF-RAMY/DevOps_Final_Project.git',
+                        credentialsId: 'github-rowan-creds'
+                    ]]
+                ])
             }
         }
 
-        stage('Docker Build') {
+        // ════════════════════════════════════════════════════════════════════════
+        // Stage 2: Build Docker Images — Heavy lifting on the Jenkins Controller
+        // ════════════════════════════════════════════════════════════════════════
+        stage('Build Docker Images') {
             steps {
-                echo "Building Docker Image for Rawan: ${APP_NAME}:${IMAGE_TAG}"
-                
-                script {
-                    sh "docker build -t ${DOCKER_HUB_USER}/${APP_NAME}:${IMAGE_TAG} ."
-                    sh "docker tag ${DOCKER_HUB_USER}/${APP_NAME}:${IMAGE_TAG} ${DOCKER_HUB_USER}/${APP_NAME}:latest"
+                echo "🔨 Building Docker image: ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
+                sh "docker build -t ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG} ."
+                sh "docker tag ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG} ${DOCKER_HUB_USER}/${IMAGE_NAME}:latest"
+            }
+        }
+
+        // ════════════════════════════════════════════════════════════════════════
+        // Stage 3: Login & Push to Docker Hub
+        // ════════════════════════════════════════════════════════════════════════
+        stage('Login & Push to Docker Hub') {
+            steps {
+                echo '🚀 Authenticating and pushing images to Docker Hub...'
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    sh "docker push ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
+                    sh "docker push ${DOCKER_HUB_USER}/${IMAGE_NAME}:latest"
                 }
             }
         }
 
-        stage('Kubernetes Validation') {
+        // ════════════════════════════════════════════════════════════════════════
+        // Stage 4: Deploy to Production (ec2-app-2)
+        //   - Only pulls pre-built images. No --build on the production server.
+        // ════════════════════════════════════════════════════════════════════════
+        stage('Deploy to Production (ec2-app-2)') {
             steps {
-                echo 'Validating Kubernetes YAML files...'
-            
-                sh "kubectl apply -f k8s/ --dry-run=client"
-            }
-        }
-
-        stage('Push to Docker Hub') {
-            steps {
-                echo 'Logging into Docker Hub and Pushing Image...'
-
-                  withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
-                    sh "echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin"
-                    sh "docker push ${DOCKER_HUB_USER}/${APP_NAME}:${IMAGE_TAG}"
-                    sh "docker push ${DOCKER_HUB_USER}/${APP_NAME}:latest"
-                  }
-                
-
-            }
-        }
-
-        stage('K8s Deployment') {
-            steps {
-                echo 'Deploying to Local Minikube Cluster...'
-                sh "kubectl apply -f k8s/"
-                sh "kubectl get pods"
+                echo "🌐 Deploying to production server: ${TARGET_SERVER}..."
+                sshagent(credentials: ['ec2-ssh-key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${TARGET_USER}@${TARGET_SERVER} '
+                            cd /var/www/ecommerce &&
+                            docker compose pull &&
+                            docker compose up -d
+                        '
+                    """
+                }
             }
         }
     }
 
     post {
+        always {
+            echo '🧹 Cleaning up workspace and local Docker images...'
+            sh "docker rmi ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG} || true"
+            sh "docker rmi ${DOCKER_HUB_USER}/${IMAGE_NAME}:latest || true"
+            sh 'docker image prune -f || true'
+            cleanWs()
+        }
         success {
-            echo "Congratulations Rawan! Pipeline for ${APP_NAME} finished successfully."
+            echo "✅ Pipeline #${env.BUILD_NUMBER} completed successfully! Image ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG} is now live on ${TARGET_SERVER}."
         }
         failure {
-            echo "Pipeline failed. Check the logs in Jenkins to fix the issue."
+            echo "❌ Pipeline #${env.BUILD_NUMBER} FAILED. Check the console output above to diagnose the issue."
         }
     }
 }
