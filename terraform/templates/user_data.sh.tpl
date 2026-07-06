@@ -4,6 +4,11 @@ set -euo pipefail
 exec > /var/log/user-data.log 2>&1
 echo "=== Depi E-Commerce EC2 Bootstrap Started ==="
 
+# ─── Set distinct Hostname ───────────────────────────────────────────────────
+hostnamectl set-hostname app-server-${instance_index}
+echo "127.0.0.1 app-server-${instance_index}" >> /etc/hosts
+
+
 # ─── System packages ─────────────────────────────────────────────────────────
 dnf update -y
 dnf install -y docker git
@@ -18,13 +23,15 @@ curl -SL "https://github.com/docker/compose/releases/download/v2.21.0/docker-com
   -o /usr/local/lib/docker/cli-plugins/docker-compose
 chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
 
-# ─── Add Swap Space (t3.micro only has 1GB RAM) ─────────────────────────────
-echo "Setting up 2GB swap space..."
-dd if=/dev/zero of=/swapfile bs=1M count=2048
-chmod 600 /swapfile
-mkswap /swapfile
-swapon /swapfile
-echo '/swapfile none swap sw 0 0' >> /etc/fstab
+# ─── Setup 4GB Swap (Essential for t3.micro) ───────────────────────────────
+if [ ! -f /swapfile ]; then
+  echo "Creating 4GB swap space..."
+  fallocate -l 4G /swapfile
+  chmod 600 /swapfile
+  mkswap /swapfile
+  swapon /swapfile
+  echo '/swapfile none swap sw 0 0' >> /etc/fstab
+fi
 
 # ─── Application directory ───────────────────────────────────────────────────
 APP_DIR="/var/www/ecommerce"

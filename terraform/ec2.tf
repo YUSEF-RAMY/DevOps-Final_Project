@@ -10,6 +10,7 @@ resource "aws_instance" "app" {
   key_name               = var.ec2_key_name != "" ? var.ec2_key_name : null
 
   user_data = base64encode(templatefile("${path.module}/templates/user_data.sh.tpl", {
+    instance_index = count.index + 1
     alb_dns_name = aws_lb.main.dns_name
     db_host      = aws_db_instance.main.address
     db_name      = var.db_name
