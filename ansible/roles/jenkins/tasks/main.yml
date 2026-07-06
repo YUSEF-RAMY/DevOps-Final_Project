@@ -1,0 +1,21 @@
+---
+- name: Create Jenkins home directory
+  file:
+    path: /var/jenkins_home
+    state: directory
+    owner: root
+    group: root
+    mode: '0777'
+
+- name: Ensure Jenkins container is running
+  docker_container:
+    name: jenkins
+    image: jenkins/jenkins:lts
+    state: started
+    recreate: yes
+    restart_policy: always
+    ports:
+      - "7080:8080"
+    volumes:
+      - /var/jenkins_home:/var/jenkins_home
+    user: root

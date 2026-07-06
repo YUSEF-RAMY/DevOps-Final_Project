@@ -1,0 +1,15 @@
+---
+- name: Check if K3s service exists
+  stat:
+    path: /etc/systemd/system/k3s.service
+  register: k3s_service_check
+
+- name: Install K3s
+  shell: curl -sfL https://get.k3s.io | sh -
+  when: not k3s_service_check.stat.exists
+
+- name: Ensure K3s is started and enabled
+  systemd:
+    name: k3s
+    state: started
+    enabled: yes
