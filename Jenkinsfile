@@ -64,6 +64,9 @@ pipeline {
         //   - Only pulls pre-built images. No --build on the production server.
         // ════════════════════════════════════════════════════════════════════════
         stage('Deploy to Production (ec2-app-2)') {
+            when {
+                branch 'develop'
+            }
             steps {
                 echo "🌐 Deploying to production server: ${TARGET_SERVER}..."
                 sshagent(credentials: ['ec2-ssh-key']) {
