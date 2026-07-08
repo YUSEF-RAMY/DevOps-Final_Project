@@ -8,7 +8,7 @@ pipeline {
         IMAGE_TAG       = "${env.BUILD_NUMBER}"
 
         // ─── Production Server (ec2-app-2) ──────────────────────────────────────
-        TARGET_SERVER   = '34.201.114.162'
+        TARGET_SERVER   = '98.94.24.164'
         TARGET_USER     = 'ec2-user'
     }
 
@@ -24,7 +24,7 @@ pipeline {
                     branches: [[name: '*/develop']],
                     userRemoteConfigs: [[
                         url: 'https://github.com/YUSEF-RAMY/DevOps_Final_Project.git',
-                        credentialsId: 'github-rowan-creds'
+                        credentialsId: 'github-depi-final-project-creds'
                     ]]
                 ])
             }
