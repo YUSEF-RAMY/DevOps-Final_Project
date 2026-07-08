@@ -63,6 +63,14 @@ resource "aws_security_group" "ec2" {
   }
 
   ingress {
+    description = "Grafana from anywhere"
+    from_port   = 3001
+    to_port     = 3001
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
     description = "Kubernetes API from anywhere"
     from_port   = 6443
     to_port     = 6443
