@@ -37,7 +37,7 @@ variable "private_subnet_cidrs" {
 variable "ec2_instance_type" {
   description = "EC2 instance type for the application server."
   type        = string
-  default     = "t3.medium"
+  default     = "t3.small"
 }
 
 variable "ec2_instance_count" {
@@ -49,7 +49,7 @@ variable "ec2_instance_count" {
 variable "ec2_key_name" {
   description = "Existing AWS EC2 key pair name for SSH access."
   type        = string
-  default     = ""
+  default     = "yusef_new_key"
 }
 
 variable "allowed_ssh_cidr" {
