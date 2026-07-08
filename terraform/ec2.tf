@@ -1,4 +1,9 @@
 # ─── EC2 Application Servers ─────────────────────────────────────────────────
+resource "aws_key_pair" "deployer" {
+  key_name   = "yusef_new_key"
+  public_key = file("${path.module}/yusef_new_key.pub")
+}
+
 resource "aws_instance" "app" {
   count = var.ec2_instance_count
 
