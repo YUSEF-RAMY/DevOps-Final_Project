@@ -53,7 +53,7 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('siteSettings', SiteSetting::get());
                 $view->with('currentTheme', ThemeHelper::current());
 
-                if (auth()->check()) {
+                if (auth()->check() && !auth()->guard('admin')->check()) {
                     $view->with('userNotifications', UserNotification::where('user_id', auth()->id())->latest()->limit(8)->get());
                     $view->with('unreadNotificationCount', UserNotification::where('user_id', auth()->id())->unread()->count());
                     $view->with('upcomingOccasions', app(OccasionReminderService::class)->upcomingForUser(auth()->user(), 5));

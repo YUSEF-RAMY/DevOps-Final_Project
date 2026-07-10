@@ -33,8 +33,13 @@ class OccasionReminderService
         return $count;
     }
 
-    public function upcomingForUser(User $user, int $limit = 6)
+    public function upcomingForUser($user, int $limit = 6)
     {
+
+        if (!$user || !method_exists($user, 'occasions')) {
+            return collect();
+        }
+
         return $user->occasions()
             ->with('preferredProduct')
             ->get()
