@@ -155,6 +155,3 @@ sudo kubectl get pods,svc -A
 
 ```
 
-```
-
-```
